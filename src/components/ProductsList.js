@@ -1,13 +1,15 @@
 import React from 'react';
-import Product from './Product';
+import EditableProduct from './EditableProduct';
 
-const ProductsList = () => {
+const ProductsList = (({ products }) => {
   return (
     <div className="product-listing">
       <h2>Products</h2>
-      {[1,2,3].map(_ => <Product /> )}
+      {products.map(product => {
+        return <EditableProduct key={product.id} product={product}/>
+      })}
     </div>
   )
-}
+});
 
 export default ProductsList;
