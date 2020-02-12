@@ -1,55 +1,83 @@
-import React, { Component } from 'react';
-import Cart from './Cart';
-import ProductsList from './ProductsList';
-import productsData from '../lib/products.js';
+import React, { Component } from "react";
+import Cart from "./Cart";
+import ProductsList from "./ProductsList";
+import client from "../lib/client.js";
+import ToggleableProductForm from "./ToggleableProductForm";
 
 class Shop extends Component {
   state = {
     products: [],
-  }
+    cart: {}
+  };
 
   componentDidMount() {
-    this.setState({products: productsData});
+    client
+      .get("/api/products")
+      .then(products => this.setState({ products: products }));
   }
+
+  handleAddProduct = newProduct => {
+    client.post(`/api/products`, newProduct).then(product => {
+      this.setState(prevState => ({
+        products: [...prevState.products, product]
+      }));
+    });
+  };
+
+  handleDecrementProductQuantity = productId => {
+    const product = this.state.products.find(
+      product => productId === product.id
+    );
+
+    client
+      .put(`/api/products/${productId}`, { quantity: product.quantity - 1 })
+      .then(updatedProduct => {
+        this.setState(prevState => ({
+          products: prevState.products.map(product => {
+            if (product.id === productId) {
+              return updatedProduct;
+            }
+            return product;
+          })
+        }));
+      });
+  };
+
+  handleAddToCart = productToAdd => {
+    // To be completed: update cart, either increment quantity for existing product
+    // or add product to cart with quantity of 1
+
+    // this.setState(prevState => {
+    //   let newProduct =
+
+    //   if (prevState.cart[productToAdd.id] !== undefined) {
+    //     return
+    //   }
+
+    //   cart: [...prevState.cart, productToAdd]
+    // });
+    this.setState(prevState => ({
+      cart: [...prevState.cart, productToAdd]
+    }));
+
+    this.handleDecrementProductQuantity(productToAdd.id);
+  };
 
   render() {
     return (
       <div id="app">
         <header>
           <h1>The Shop!</h1>
-          <Cart />
+          <Cart cart={this.state.cart} />
         </header>
 
         <main>
-
-          <ProductsList products={this.state.products}/>
-
-          <div class="add-form visible">
-            <p><a class="button add-product-button">Add A Product</a></p>
-            <h3>Add Product</h3>
-            <form>
-              <div class="input-group">
-                <label for="product-name">Product Name</label>
-                <input type="text" id="product-name" value="" />
-              </div>
-
-              <div class="input-group">
-                <label for="product-price">Price</label>
-                <input type="text" id="product-price" value="" />
-              </div>
-
-              <div class="input-group">
-                <label for="product-quantity">Quantity</label>
-                <input type="text" id="product-quantity" value="" />
-              </div>
-
-              <div class="actions form-actions">
-                <a class="button">Add</a>
-                <a class="button">Cancel</a>
-              </div>
-            </form>
-          </div>
+          <ProductsList
+            products={this.state.products}
+            onAddToCart={this.handleAddToCart}
+          />
         </main>
+        <ToggleableProductForm onSubmitProduct={this.handleAddProduct} />
       </div>
     );
   }
