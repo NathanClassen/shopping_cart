@@ -6,9 +6,9 @@ const Product = (props) => {
       <div className="product-details">
         <h3>{props.product.title}</h3>
         <p className="price">{props.product.price}</p>
-        <p className="quantity">{props.product.quantity} left in stock</p>
+        <p className={`quantity ${props.product.quantity === 0 ? 'none-left' : ''}`}>{props.product.quantity} left in stock</p>
       </div>
-    </div>
+    </div >
   )
 }
 
