@@ -9,7 +9,9 @@ class EditableProduct extends Component {
 
   handleAddToCart = event => {
     event.preventDefault();
-    this.props.onAddToCart(this.props.product);
+    if (this.props.product.quantity > 0) {
+      this.props.onAddToCart(this.props.product);
+    }
   };
 
   render() {
@@ -19,13 +21,13 @@ class EditableProduct extends Component {
         {this.state.isEditing ? (
           <EditProductForm product={this.props.product} />
         ) : (
-          <div className="actions product-actions">
-            <a className="button add-to-cart" onClick={this.handleAddToCart}>
-              Add to Cart
+            <div className="actions product-actions">
+              <a className={`button add-to-cart ${this.props.product.quantity === 0 ? 'disabled' : ''}`} onClick={this.handleAddToCart} >
+                Add to Cart
             </a>
-            <a className="button edit">Edit</a>
-          </div>
-        )}
+              <a className="button edit">Edit</a>
+            </div>
+          )}
         <a className="delete-button">
           <span>X</span>
         </a>

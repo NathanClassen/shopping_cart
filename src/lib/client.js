@@ -1,4 +1,4 @@
-import {uuid} from 'uuidv4';
+import { uuid } from 'uuidv4';
 
 let uuid1 = uuid();
 

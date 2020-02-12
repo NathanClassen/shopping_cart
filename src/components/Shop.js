@@ -7,7 +7,8 @@ import ToggleableProductForm from "./ToggleableProductForm";
 class Shop extends Component {
   state = {
     products: [],
-    cart: {}
+    cart: {},
+    totalPrice: 0
   };
 
   componentDidMount() {
@@ -30,7 +31,7 @@ class Shop extends Component {
     );
 
     client
-      .put(`/api/products/${productId}`, { quantity: product.quantity - 1 })
+      .put(`/api/products/${productId}`, { ...product, quantity: product.quantity - 1 })
       .then(updatedProduct => {
         this.setState(prevState => ({
           products: prevState.products.map(product => {
@@ -44,31 +45,44 @@ class Shop extends Component {
   };
 
   handleAddToCart = productToAdd => {
-    // To be completed: update cart, either increment quantity for existing product
-    // or add product to cart with quantity of 1
-
-    // this.setState(prevState => {
-    //   let newProduct =
-
-    //   if (prevState.cart[productToAdd.id] !== undefined) {
-    //     return
-    //   }
-
-    //   cart: [...prevState.cart, productToAdd]
-    // });
-    this.setState(prevState => ({
-      cart: [...prevState.cart, productToAdd]
-    }));
-
+    this.addProductToCart(productToAdd);
     this.handleDecrementProductQuantity(productToAdd.id);
   };
+
+  addProductToCart = (product) => {
+    this.setState(prevState => {
+      let foundProduct = prevState.cart[product.id];
+      let updatedCart
+      if (foundProduct) {
+        const updatedProduct = Object.assign({}, foundProduct, { quantity: foundProduct.quantity + 1 })
+        updatedCart = Object.assign({}, prevState.cart, { [product.id]: updatedProduct })
+        return {
+          cart: updatedCart,
+          totalPrice: prevState.totalPrice + product.price,
+        }
+      } else {
+        const newProduct = {
+          title: product.title,
+          quantity: 1,
+          price: product.price,
+        }
+        updatedCart = Object.assign({}, prevState.cart, { [product.id]: newProduct })
+        return {
+          cart: updatedCart,
+          totalPrice: prevState.totalPrice + product.price,
+        }
+      }
+    })
+  }
+
+
 
   render() {
     return (
       <div id="app">
         <header>
           <h1>The Shop!</h1>
-          <Cart cart={this.state.cart} />
+          <Cart cart={this.state.cart} totalPrice={this.state.totalPrice} />
         </header>
 
         <main>

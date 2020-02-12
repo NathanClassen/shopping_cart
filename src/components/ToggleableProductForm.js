@@ -36,7 +36,7 @@ class ToggleableProductForm extends Component {
         <h3>Add Product</h3>
         <form>
           <div className="input-group">
-            <label for="product-name">Product Name</label>
+            <label htmlFor="product-name">Product Name</label>
             <input
               name="title"
               type="text"
@@ -47,7 +47,7 @@ class ToggleableProductForm extends Component {
           </div>
 
           <div className="input-group">
-            <label for="product-price">Price</label>
+            <label htmlFor="product-price">Price</label>
             <input
               name="price"
               type="text"
@@ -58,7 +58,7 @@ class ToggleableProductForm extends Component {
           </div>
 
           <div className="input-group">
-            <label for="product-quantity">Quantity</label>
+            <label htmlFor="product-quantity">Quantity</label>
             <input
               name="quantity"
               type="text"
